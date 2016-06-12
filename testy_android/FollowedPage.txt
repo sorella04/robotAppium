@@ -1,0 +1,31 @@
+*** Settings ***
+Library           AppiumLibrary
+
+*** Variables ***
+${LocateStopText}    Locate stop
+${RouteTabTitleText}    Route
+${RouteTabXpath}    xpath=//android.widget.TextView[@text='Route']
+${FollowedTabTitleText}    Followed
+${FollowedTabXpath}    xpath=//android.widget.TextView[@text='Followed']
+${TimetablesTabTitleText}    Timetables
+${TimetablesTabIXpath}    xpath=//android.widget.TextView[@text='Timetables']
+${LocateStopId}    com.citynav.jakdojade.pl.android:id/act_w_l_stop_lbl
+${MoreOptionsCd}    More options
+
+*** Keywords ***
+Verify Followed Page
+    [Arguments]    ${city}
+    Wait Until Page Contains    ${LocateStopText}
+    Page Should Contain Text    ${RouteTabTitleText}
+    Page Should Contain Text    ${FollowedTabTitleText}
+    Page Should Contain Text    ${TimetablesTabTitleText}
+    Page Should Contain Text    ${city}
+
+Go To Route Page
+    Click Element    ${RouteTabXpath}
+
+Go To Timetables Page
+    Click Element    ${TimetablesTabIXpath}
+
+Go To Followed Page
+    Click Element    ${FollowedTabXpath}

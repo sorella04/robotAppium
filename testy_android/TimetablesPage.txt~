@@ -1,0 +1,110 @@
+*** Settings ***
+Library           AppiumLibrary
+Library           Collections
+
+*** Variables ***
+${SearchLinesText}    Search lines
+${ClearQueryCd}    Clear query
+${SearchQueryXpath}    xpath=//android.widget.EditText[@content-desc='Search query']
+${TramsButtonXpath}    xpath=//android.widget.TextView[@text='Trams']
+${BusesButtonXpath}    xpath=//android.widget.TextView[@text='Buses']
+@{NamesOfTheStopsKsiezeMale}    LEŚNICA    Jeleniogórska    Wschowska    Złotnicka    Kamiennogórska    Kosmonautów (Szpital)    Grabowa
+...               Kosmonautów (Nowe Żerniki)    Glinianki    Stadion Miejski (Lotnicza)    PILCZYCE    Metalowców    Bajana    Park Zachodni
+...               DH Astra    Kwiska    Małopanewska    Niedźwiedzia    ZACHODNIA (Stacja kolejowa)    pl. Strzegomski    Młodych Techników
+...               PL. JANA PAWŁA II    Rynek    Świdnicka    GALERIA DOMINIKAŃSKA    pl. Wróblewskiego    pl. Zgody    Na Niskich Łąkach
+...               Krakowska    KRAKOWSKA (Centrum Handlowe)    Armii Krajowej    Park Wschodni    Karwińska    Głubczycka    KSIĘŻE MAŁE
+@{NamesOfTheStopsLesnica}    KSIĘŻE MAŁE    Głubczycka    Karwińska    Park Wschodni    Armii Krajowej    KRAKOWSKA (Centrum Handlowe)    Krakowska
+...               Na Niskich Łąkach    pl. Zgody    pl. Wróblewskiego    GALERIA DOMINIKAŃSKA    Świdnicka    Rynek    PL. JANA PAWŁA II
+...               Młodych Techników    pl. Strzegomski    ZACHODNIA (Stacja kolejowa)    Niedźwiedzia    Małopanewska    Kwiska    DH Astra
+...               Park Zachodni    Bajana    Metalowców    PILCZYCE    Stadion Miejski (Lotnicza)    Glinianki    Kosmonautów (Nowe Żerniki)
+...               Grabowa    Kosmonautów (Szpital)    Kamiennogórska    Złotnicka    Wschowska    Jeleniogórska    LEŚNICA
+
+*** Keywords ***
+Verify Timetables Page
+    AppiumLibrary.Wait Until Page Contains    ${SearchLinesText}
+    AppiumLibrary.Page Should Contain Text    ${ClearQueryCd}
+    AppiumLibrary.Page Should Contain Element    ${TramsButtonXpath}
+    AppiumLibrary.Page Should Contain Element    ${BusesButtonXpath}
+
+Click Trams Button
+    Click Element    ${TramsButtonXpath}
+
+Click Buses Button
+    Click Element    ${BusesButtonXpath}
+
+Find and Check Specific Timetable
+    [Arguments]    ${LineNumber}
+    Enter The Name Of A Line    ${LineNumber}
+    Click The Name Of A Line    ${LineNumber}
+    Verify The List Of Stops    ${LineNumber}
+    Select A Specific Stop    Grabowa    Left
+
+Enter The Name Of A Line
+    [Arguments]    ${LineNumber}
+    Input Text    ${SearchQueryXpath}    ${LineNumber}
+
+Click The Name Of A Line
+    [Arguments]    ${LineNumber}
+    ${LineXpath}=    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.Button[@text='    ${LineNumber}    ']
+    Click Element    ${LineXpath}
+
+Verify The List Of Stops
+    [Arguments]    ${LineNumber}    # \ @{LeftListOfStops} | @{RightListOfStops}
+    [Documentation]    Verifies the list of stops of the selected line.
+    ...
+    ...    Agruments:
+    ...    ${LineNumber} - The name of the selected line
+    ...    Two lists of timetables of current line in different directions:
+    ...    @{LeftListOfStops}- The first list of stops in one direction (on the left),
+    ...    @{RightTheListOfStops}- The second list of stops in the opposite direction(on the right)
+    AppiumLibrary.Wait Until Page Contains    ${LineNumber}
+    ${index}=    Set Variable    1
+    ${NumberOfStops}=    Get Length    ${NamesOfTheStopsKsiezeMale}
+    log     ${NumberOfStops}
+    :FOR    ${var}    IN RANGE    ${NumberOfStops}
+    \    log    ${var}
+    \    ${NamesOfTheStopsXpath}=    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.LinearLayout[@index=0]/android.widget.LinearLayout[@index=    ${index}    ]/android.widget.TextView[@text="
+    \    ...    ${NamesOfTheStopsKsiezeMale[${var}]}    "]
+    \    ${NamesOfTheStopsXpath2}=    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.LinearLayout[@index=1]/android.widget.LinearLayout[@index=    ${index}    ]/android.widget.TextView[@text="
+    \    ...    ${NamesOfTheStopsLesnica[${var}]}    "]
+    \    ${result}=    Run Keyword And Ignore Error    Page Should Contain Element    ${NamesOfTheStopsXpath}
+    \    Run Keyword If    '${result[0]}'=='FAIL'    TimetablesPage.Swipe If Element Is Not Visible    ${NamesOfTheStopsXpath}
+    \    Run Keyword If    '${result[0]}'=='PASS'    log    "Element is visible"
+    \    Page Should Contain Element    ${NamesOfTheStopsXpath2}
+    \    ${index}=    Set Variable    ${index} +1
+
+Swipe If Element Is Not Visible
+    [Arguments]    ${element}
+    : FOR    ${i}    IN RANGE    4
+    \    ${result}=    Run Keyword And Ignore Error    Page Should Contain Element    ${element}
+    \    Log    ${result}
+    \    Run Keyword If    '${result[0]}'=='FAIL'    Swipe    0.5    0.7    0.5
+    \    ...    0.4
+    \    Run Keyword If    '${result[0]}'=='PASS'    Exit For Loop
+
+Select A Specific Stop
+    [Arguments]    ${TheNameOfTheStop}    ${Direction}
+    [Documentation]    Choose the name of the stop.
+    ...    for example:
+    ...    ${TheNameOfTheStop} = "LEŚNICA"
+    ...    ${Direction} = Left/Right (orientation on the Timatables page)
+    ${ListIndex}=    Run Keyword If    '${Direction}'=='Left'    Get Index From List    ${NamesOfTheStopsKsiezeMale}    ${TheNameOfTheStop}
+    ${NewListIndex}=    Run Keyword And Ignore Error    Evaluate    ${ListIndex} +1
+    ${NamesOfTheStopsXpath}=    Run Keyword If    '${Direction}'=='Left'    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.LinearLayout[@index=0]/android.widget.LinearLayout[@index=    ${NewListIndex}
+    ...    ]/android.widget.TextView[@text="    ${TheNameOfTheStop}    "]
+    ${ListIndex2}=    Run Keyword If    '${Direction}'=='Right'    Get Index From List    ${NamesOfTheStopsLesnica}    ${TheNameOfTheStop}
+    ${NewListIndex2}=    Run Keyword And Ignore Error    Evaluate    ${ListIndex2} +1
+    ${NamesOfTheStopsXpath2}=    Run Keyword If    '${Direction}'=='Right'    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.LinearLayout[@index=1]/android.widget.LinearLayout[@index=    ${NewListIndex2}
+    ...    ]/android.widget.TextView[@text="    ${TheNameOfTheStop}    "]
+    Run Keyword If    '${ListIndex}'!='None'    Swipe If Element Is Not Visible    ${NamesOfTheStopsXpath}
+    Run Keyword If    '${ListIndex2}'!='None'    Swipe If Element Is Not Visible    ${NamesOfTheStopsXpath2}
+    Run Keyword If    '${ListIndex}'!='None'    Click Element    ${NamesOfTheStopsXpath}
+    Run Keyword If    '${ListIndex2}'!='None'    Click Element    ${NamesOfTheStopsXpath2}
+
+Find Xpath In Timetable
+    [Arguments]    ${TheNameOfTheStop}
+    ${index}=    Get Index From List    ${NamesOfTheStopsKsiezeMale}    ${TheNameOfTheStop}
+    ${index}=    Convert To Integer    ${index}
+    ${index1}=    Set Variable    ${1}
+    ${index}=    Evaluate    ${index1} + ${index}
+    log    ${index1}

@@ -1,0 +1,49 @@
+*** Settings ***
+Library           AppiumLibrary
+Library           BuiltIn
+Resource          FollowedPage.txt
+Resource          TimetablesPage.txt
+
+*** Variables ***
+${AcceptTheTermsOfUsageText}    I accept the terms of usage of the jakdojade.pl service available on the http://jakdojade.pl website.
+${AcceptTheTermsOfUsageId}    com.citynav.jakdojade.pl.android:id/dlg_terms_accept_chbx
+${OkButtonText}    OK
+${OkButtonId}     android:id/button1
+${PickACityTitleText}    Pick a city
+${PickACityTitleId}    android:id/alertTitle
+
+*** Keywords ***
+Verify and Accept The Terms of Usage
+    Wait Until Page Contains    Activate application
+    Page Should Contain Text    ${AcceptTheTermsOfUsageText}
+    Page Should Contain Element    id=${OkButtonId}
+    Click Element    id=${AcceptTheTermsOfUsageId}
+    Element Attribute Should Match    id=${OkButtonId}    enabled    False
+    sleep    3
+    Click Element    id=${AcceptTheTermsOfUsageId}
+    Click Button    ${OkButtonText}
+
+Postconditions
+    Close application
+
+Verify and Pick a City
+    [Arguments]    ${city}
+    Wait Until Page Contains    ${PickACityTitleText}
+    Swipe Until Text Is Not Visible    ${city}
+    ${cityxpath}=    BuiltIn.Catenate    SEPARATOR=    xpath=//android.widget.CheckedTextView[@text='    ${city}    ']
+    log    ${cityxpath}
+    Click Element    ${cityxpath}
+    FollowedPage.Verify Followed Page    ${city}
+
+Preconditions
+    open application    http://localhost:4723/wd/hub    platformName=Android    platformVersion=4.1.2    deviceName=192.168.56.101:5555    app=/home/marcelina/jakdojade.apk    appPackage=com.citynav.jakdojade.pl.android
+    ...    appActivity=SplashScreenActivity
+
+Swipe Until Text Is Not Visible
+    [Arguments]    ${city}
+    : FOR    ${i}    IN RANGE    4
+    \    ${result}=    Run Keyword And Ignore Error    Page Should Contain Text    ${city}
+    \    Log    ${result}
+    \    Run Keyword If    '${result[0]}'=='FAIL'    Swipe    0.5    0.7    0.5
+    \    ...    0.4
+    \    Run Keyword If    '${result[0]}'=='PASS'    Exit For Loop
