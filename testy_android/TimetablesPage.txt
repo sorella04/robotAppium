@@ -38,7 +38,9 @@ Find and Check Specific Timetable
     Enter The Name Of A Line    ${LineNumber}
     Click The Name Of A Line    ${LineNumber}
     Verify The List Of Stops    ${LineNumber}
-    Comment    Select A Specific Stop    Grabowa    Left
+    Scroll Page To The Begining    3
+    Select A Specific Stop    Grabowa    Left
+    Verify Timetable
 
 Enter The Name Of A Line
     [Arguments]    ${LineNumber}
@@ -73,14 +75,6 @@ Verify The List Of Stops
     \    Run Keyword If    '${result[0]}'=='PASS'    log    "Element is visible"
     \    Page Should Contain Element    ${NamesOfTheStopsXpath2}
     \    ${index}=    Set Variable    ${index} +1
-    Swipe    0.5    0.3    0.5    0.9
-    Log    przesuniete
-    sleep    2
-    Swipe    0.5    0.3    0.5    0.9
-    Log    przesuniete2
-    sleep    2
-    Swipe    0.5    0.3    0.5    0.9
-    Log    przesuniete3
 
 Swipe If Element Is Not Visible
     [Arguments]    ${element}
@@ -120,3 +114,15 @@ Find Xpath In Timetable
     ${index1}=    Set Variable    ${1}
     ${index}=    Evaluate    ${index1} + ${index}
     log    ${index1}
+
+Scroll Page To The Begining
+    [Arguments]    ${howMany}
+    : FOR    ${i}    IN RANGE    ${howMany}
+    \    Swipe    0.5    0.3    0.5    0.9
+    \    Log    przesuniete3
+
+Verify Timetable
+    Wait Until Page Contains    Grabowa
+    Page Should Contain Element    xpath=//android.widget.TextView[@text="Working Days"]
+    Page Should Contain Element    xpath=//android.widget.TextView[@text="Weekends"]
+    Page Should Contain Element    xpath=//android.widget.TextView[@text="Route"]

@@ -5,9 +5,10 @@ Resource          keywords.txt
 *** Test Cases ***
 tc1
     [Setup]    Preconditions
-    Verify and Accept The Terms of Usage
-    Verify and Pick a City    Wrocław
+    StartPage.Verify and Accept The Terms of Usage
+    StartPage.Verify and Pick a City    Wrocław
     FollowedPage.Go To Timetables Page
     TimetablesPage.Verify Timetables Page
     TimetablesPage.Find and Check Specific Timetable    3
+    sleep    7
     [Teardown]    Postconditions

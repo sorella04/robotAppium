@@ -15,7 +15,7 @@ ${MoreOptionsCd}    More options
 *** Keywords ***
 Verify Followed Page
     [Arguments]    ${city}
-    Wait Until Page Contains    ${LocateStopText}
+    Wait Until Page Contains    ${LocateStopText}    timeout=10
     Page Should Contain Text    ${RouteTabTitleText}
     Page Should Contain Text    ${FollowedTabTitleText}
     Page Should Contain Text    ${TimetablesTabTitleText}
