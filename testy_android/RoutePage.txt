@@ -1,0 +1,60 @@
+*** Settings ***
+Library           AppiumLibrary
+
+*** Variables ***
+${MyLocationButtonId}    com.citynav.jakdojade.pl.android:id/act_pln_from_button_view
+${SelectTheDestinationButtonId}    com.citynav.jakdojade.pl.android:id/act_pln_to_btn
+${SelectLocationOnMapFromId}    com.citynav.jakdojade.pl.android:id/act_pln_from_map_btn
+${SelectLocationOnMapToId}    com.citynav.jakdojade.pl.android:id/act_pln_to_map_btn
+${ReverseDestinationButtonId}    com.citynav.jakdojade.pl.android:id/act_pln_reverse_btn
+${SearchStartingPointBarId}    com.citynav.jakdojade.pl.android:id/search_src_text
+${CloseSearchButtonId}    com.citynav.jakdojade.pl.android:id/search_close_btn
+${ConfirmSearchButtonId}    com.citynav.jakdojade.pl.android:id/act_loc_sear_confirm_btn
+
+*** Keywords ***
+Verify Route Page
+    Wait Until Page Contains    ${MyLocationButtonId}
+    Page Should Contain Element    id=${SelectTheDestinationButtonId}
+    Page Should Contain Element    id=${SelectLocationOnMapFromId}
+    Page Should Contain Element    id=${SelectLocationOnMapToId}
+    Page Should Contain Element    id=${ReverseDestinationButtonId}
+
+Click Choose My Location Button
+    AppiumLibrary.Click Element    id=${MyLocationButtonId}
+
+Click Choose My Destination Button
+    AppiumLibrary.Click Element    id=${SelectTheDestinationButtonId}
+
+Verify Starting Point Page
+    Wait Until Page Contains    Starting point
+    Page Should Contain Element    id=${SearchStartingPointBarId}
+    Page Should Contain Element    id=${CloseSearchButtonId}
+    Page Should Contain Element    id=${ConfirmSearchButtonId}
+
+Verify Destination Point Page
+    Wait Until Page Contains    Destination
+    Page Should Contain Element    id=${SearchStartingPointBarId}
+    Page Should Contain Element    id=${CloseSearchButtonId}
+    Page Should Contain Element    id=${ConfirmSearchButtonId}
+
+Enter and Choose Starting Point
+    AppiumLibrary.Input Text    id=${SearchStartingPointBarId}    Siechnice
+    Wait Until Page Contains Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Siechnice']
+    Click Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Siechnice']
+
+Enter and Choose Destination Point
+    AppiumLibrary.Input Text    id=${SearchStartingPointBarId}    Bajana
+    Wait Until Page Contains Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Bajana']
+    Click Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Bajana']
+
+Click and Verify Search Route
+    Click Element    id=com.citynav.jakdojade.pl.android:id/act_pln_search_btn
+    Wait Until Page Contains    Suggested routes
+
+Enter, Clear and Choose Starting Point
+    AppiumLibrary.Input Text    id=${SearchStartingPointBarId}    Siechnice
+    sleep    5
+    Clear Text    id=${SearchStartingPointBarId}
+    AppiumLibrary.Input Text    id=${SearchStartingPointBarId}    Siechnice
+    Wait Until Page Contains Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Siechnice']
+    Click Element    xpath=//android.widget.LinearLayout[@index=1]/android.widget.TextView[@text='Siechnice']
