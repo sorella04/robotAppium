@@ -19,6 +19,9 @@ ${BusesButtonXpath}    xpath=//android.widget.TextView[@text='Buses']
 ...               pl. Strzegomski    ZACHODNIA (Stacja kolejowa)    Niedźwiedzia    Małopanewska    Kwiska    DH Astra    Park Zachodni
 ...               Bajana    Metalowców    PILCZYCE    Stadion Miejski (Lotnicza)    Glinianki    Kosmonautów (Nowe Żerniki)    Grabowa
 ...               Kosmonautów (Szpital)    Kamiennogórska    Złotnicka    Wschowska    Jeleniogórska    LEŚNICA
+${WorkingDaysTabXpath}    xpath=//android.widget.TextView[@text='Working Days']
+${WeekendsTabXpath}    xpath=//android.widget.TextView[@text='Weekends']
+${RouteTabXpath}    xpath=//android.widget.TextView[@text='Route']
 
 *** Keywords ***
 Verify Timetables Page
@@ -34,13 +37,13 @@ Click Buses Button
     Click Element    ${BusesButtonXpath}
 
 Find and Check Specific Timetable
-    [Arguments]    ${LineNumber}
+    [Arguments]    ${LineNumber}    ${StopName}
     Enter The Name Of A Line    ${LineNumber}
     Click The Name Of A Line    ${LineNumber}
     Verify The List Of Stops    ${LineNumber}
     Scroll Page To The Begining    3
-    Select A Specific Stop    Grabowa    Left
-    Verify Timetable
+    Select A Specific Stop    ${StopName}    Left
+    Verify Timetable    ${StopName}
 
 Enter The Name Of A Line
     [Arguments]    ${LineNumber}
@@ -122,7 +125,10 @@ Scroll Page To The Begining
     \    Log    przesuniete3
 
 Verify Timetable
-    Wait Until Page Contains    Grabowa
-    Page Should Contain Element    xpath=//android.widget.TextView[@text="Working Days"]
-    Page Should Contain Element    xpath=//android.widget.TextView[@text="Weekends"]
-    Page Should Contain Element    xpath=//android.widget.TextView[@text="Route"]
+    [Arguments]    ${StopName}
+    Wait Until Page Contains    ${StopName}
+    Comment    Page Should Contain Element    ${WorkingDaysTabXpath}
+    Page Should Contain Element    ${WeekendsTabXpath}
+    Page Should Contain Element    ${RouteTabXpath}
+    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_stop_lbl
+    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_watch_btn

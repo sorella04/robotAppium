@@ -4,6 +4,7 @@ Library           BuiltIn
 Resource          FollowedPage.txt
 Resource          TimetablesPage.txt
 Resource          StartPage.txt
+Resource          RoutePage.txt
 
 *** Variables ***
 
@@ -12,5 +13,5 @@ Postconditions
     Close application
 
 Preconditions
-    open application    http://localhost:4723/wd/hub    platformName=Android    platformVersion=4.1.2    deviceName=192.168.56.101:5555    app=/home/linux/jakdojade.apk    appPackage=com.citynav.jakdojade.pl.android
+    open application    http://localhost:4723/wd/hub    platformName=Android    platformVersion=4.1.2    deviceName=192.168.56.101:5555    app=/home/marcelina/jakdojade.apk    appPackage=com.citynav.jakdojade.pl.android
     ...    appActivity=SplashScreenActivity

@@ -3,12 +3,39 @@ Library           AppiumLibrary
 Resource          keywords.txt
 
 *** Test Cases ***
-tc1
+User can find specific timetable
     [Setup]    Preconditions
     StartPage.Verify and Accept The Terms of Usage
     StartPage.Verify and Pick a City    Wrocław
     FollowedPage.Go To Timetables Page
     TimetablesPage.Verify Timetables Page
-    TimetablesPage.Find and Check Specific Timetable    3
-    sleep    7
+    TimetablesPage.Find and Check Specific Timetable    3    Grabowa
+    [Teardown]    Postconditions
+
+User can search route
+    [Setup]    Preconditions
+    StartPage.Verify and Accept The Terms of Usage
+    StartPage.Verify and Pick a City    Wrocław
+    FollowedPage.Go To Route Page
+    RoutePage.Verify Route Page
+    RoutePage.Click Choose My Location Button
+    RoutePage.Verify Starting Point Page
+    Enter and Choose Starting Point
+    Click Choose My Destination Button
+    Verify Destination Point Page
+    Enter and Choose Destination Point
+    Click and Verify Search Route
+    [Teardown]    Postconditions
+
+tc3 - probny
+    [Setup]    Preconditions
+    StartPage.Verify and Accept The Terms of Usage
+    StartPage.Verify and Pick a City    Wrocław
+    FollowedPage.Go To Route Page
+    RoutePage.Verify Route Page
+    Click Element    id=${SelectLocationOnMapFromId}
+    Wait Until Page Contains    Google Map
+    sleep    10
+    Long Press    xpath=//android.view.View[@content-desc="Google Map"]
+    sleep    10
     [Teardown]    Postconditions
