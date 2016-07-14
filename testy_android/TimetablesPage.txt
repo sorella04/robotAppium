@@ -14,19 +14,19 @@ ${BusesButtonXpath}    xpath=//android.widget.TextView[@text='Buses']
 ...               PL. JANA PAWŁA II    Rynek    Świdnicka    GALERIA DOMINIKAŃSKA    pl. Wróblewskiego    pl. Zgody    Na Niskich Łąkach
 ...               Krakowska    KRAKOWSKA (Centrum Handlowe)    Armii Krajowej    Park Wschodni    Karwińska    Głubczycka    KSIĘŻE MAŁE
 @{NamesOfTheStopsLesnica}    KSIĘŻE MAŁE    Głubczycka    Karwińska    Park Wschodni    Armii Krajowej    KRAKOWSKA (Centrum Handlowe)    Krakowska
-...               Na Niskich Łąkach    pl. Zgody    pl. Wróblewskiego    GALERIA DOMINIKAŃSKA    Oławska    Wita Stwosza    Uniwersytecka
-...               Uniwersytet    Pomorska    Pomorska    Dmowskiego    PL. JANA PAWŁA II    PL. JANA PAWŁA II    Młodych Techników
-...               pl. Strzegomski    ZACHODNIA (Stacja kolejowa)    Niedźwiedzia    Małopanewska    Kwiska    DH Astra    Park Zachodni
-...               Bajana    Metalowców    PILCZYCE    Stadion Miejski (Lotnicza)    Glinianki    Kosmonautów (Nowe Żerniki)    Grabowa
-...               Kosmonautów (Szpital)    Kamiennogórska    Złotnicka    Wschowska    Jeleniogórska    LEŚNICA
+...               Na Niskich Łąkach    pl. Zgody    pl. Wróblewskiego    GALERIA DOMINIKAŃSKA    Świdnicka    Rynek    PL. JANA PAWŁA II
+...               Młodych Techników    pl. Strzegomski    ZACHODNIA (Stacja kolejowa)    Niedźwiedzia    Małopanewska    Kwiska    DH Astra
+...               Park Zachodni    Bajana    Metalowców    PILCZYCE    Stadion Miejski (Lotnicza)    Glinianki    Kosmonautów (Nowe Żerniki)
+...               Grabowa    Kosmonautów (Szpital)    Kamiennogórska    Złotnicka    Wschowska    Jeleniogórska    LEŚNICA
 ${WorkingDaysTabXpath}    xpath=//android.widget.TextView[@text='Working Days']
 ${WeekendsTabXpath}    xpath=//android.widget.TextView[@text='Weekends']
 ${RouteTabXpath}    xpath=//android.widget.TextView[@text='Route']
+${StopNameTitleId}    com.citynav.jakdojade.pl.android:id/act_tt_stop_lbl
 
 *** Keywords ***
 Verify Timetables Page
     AppiumLibrary.Wait Until Page Contains    ${SearchLinesText}
-    AppiumLibrary.Page Should Contain Text    ${ClearQueryCd}
+    Comment    AppiumLibrary.Page Should Contain Text    ${ClearQueryCd}
     AppiumLibrary.Page Should Contain Element    ${TramsButtonXpath}
     AppiumLibrary.Page Should Contain Element    ${BusesButtonXpath}
 
@@ -43,7 +43,7 @@ Find and Check Specific Timetable
     Verify The List Of Stops    ${LineNumber}
     Scroll Page To The Begining    3
     Select A Specific Stop    ${StopName}    Left
-    Verify Timetable    ${StopName}
+    Verify Timetable
 
 Enter The Name Of A Line
     [Arguments]    ${LineNumber}
@@ -125,10 +125,9 @@ Scroll Page To The Begining
     \    Log    przesuniete3
 
 Verify Timetable
-    [Arguments]    ${StopName}
-    Wait Until Page Contains    ${StopName}
-    Comment    Page Should Contain Element    ${WorkingDaysTabXpath}
+    Wait Until Page Contains    ${StopNameTitleId}
+    Wait Until Page Contains Element    ${WorkingDaysTabXpath}
     Page Should Contain Element    ${WeekendsTabXpath}
     Page Should Contain Element    ${RouteTabXpath}
-    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_stop_lbl
-    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_watch_btn
+    Comment    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_stop_lbl
+    Comment    Page Should Contain Element    id=com.citynav.jakdojade.pl.android:id/act_tt_watch_btn
